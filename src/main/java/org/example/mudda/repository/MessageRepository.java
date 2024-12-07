@@ -1,6 +1,7 @@
 package org.example.mudda.repository;
 
 
+import org.example.mudda.entity.Capsule;
 import org.example.mudda.entity.Message;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,6 +11,8 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
 
     Optional<Message> findById(Long id);
+
+    int countByCapsuleId(Long capsuleId);
 
 
 }

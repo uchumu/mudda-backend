@@ -35,6 +35,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'commons-fileupload:commons-fileupload:1.4'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'mysql:mysql-connector-java:8.0.32'
+    implementation 'mysql:mysql-connector-java'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
 }
 
 tasks.named('test') {

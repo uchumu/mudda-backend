@@ -65,26 +65,28 @@ public class MuddaController {
         return new ResponseEntity<>(muddaService.createCapsule(dto), HttpStatus.OK);
     }
 
+
     @PostMapping("/api/capsule/message")
     @Operation(
             summary = "캡슐 메시지 생성",
             description = "" +
                     "# request\n" +
-                    "- `code`: 문자열 (문자열)\n" +
-                    "- `message`: 문자열 (문자열)\n" +
-                    "\n" +
-                    "# response\n" +
-                    "- `code`: 캡슐 코드 (문자열)\n"
+                    "- `code`: 캡슐 코드(문자열)\n" +
+                    "- `dto`: dto\n" +
+                    "  - `userName`: 유저 이름(문자열)\n" +
+                    "  - `text`: 텍스트(문자열)\n"+
+                    "- `file` : Multipart파일 (파일)\n"
+
     )
+
     ResponseEntity<BaseResponse> createCapsuleMessage(
             @RequestParam(value = "code") String code,
             @RequestPart @Valid CapsuleMessageInsertRequestDTO dto,
             @RequestPart @Parameter(hidden = true) MultipartFile file
-            ) throws Exception {
+    ) throws Exception {
         dto.setCode(code);
         return new ResponseEntity<>(muddaService.createCapsuleMessage(dto, file), HttpStatus.OK);
     }
-
 
 
 }

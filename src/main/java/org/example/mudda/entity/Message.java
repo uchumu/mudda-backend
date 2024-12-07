@@ -1,5 +1,7 @@
 package org.example.mudda.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +20,11 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CAPSULE_ID", nullable = false)
+    @JsonIgnore
+    private Capsule capsule;
+
     @Column(nullable = false)
     private String userName;
 
@@ -29,26 +36,25 @@ public class Message {
 
 
     @Builder
-    public Message(Long id, String userName, String text, String imageUrl) {
-        this.id = id;
+    public Message(Capsule capsule, String userName, String text, String imageUrl) {
+        this.capsule = capsule;
         this.userName = userName;
         this.text = text;
         this.imageUrl = imageUrl;
     }
 
-    public static Message of(Long id, String userName, String text, String imageUrl) {
+    public static Message of(Capsule capsule, String userName, String text, String imageUrl) {
         return builder()
-                .id(id)
+                .capsule(capsule)
                 .userName(userName)
                 .text(text)
                 .imageUrl(imageUrl)
                 .build();
     }
 
-    public void update(Message message) {
-        this.userName = message.userName;
-        this.text = message.text;
-        this.imageUrl = message.imageUrl;
+    public void update(String text, String imageUrl) {
+        this.text = text;
+        this.imageUrl = imageUrl;
     }
 
 }

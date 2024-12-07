@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -40,10 +41,16 @@ public class Capsule {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CAPSULE_ID")
+    @OneToMany(mappedBy = "capsule", fetch = FetchType.LAZY, cascade = CascadeType.ALL) // mappedBy 설정
     private List<Message> messages;
 
+
+    private Long createAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createAt = Instant.now().getEpochSecond(); // 현재 시간을 초 단위로 설정
+    }
 
     @Builder
     public Capsule(String title, String status, Double coodinateX, Double coodinateY, Long goalTime, Long capsuleDesignId, String password, List<Message> messages) {
@@ -68,6 +75,16 @@ public class Capsule {
                 .password(password)
                 .messages(messages)
                 .build();
+    }
+
+    public void update(String title, String status, Double coodinateX, Double coodinateY, Long goalTime, Long capsuleDesignId, String password) {
+        this.title = title;
+        this.status = status;
+        this.coodinateX = coodinateX;
+        this.coodinateY = coodinateY;
+        this.goalTime = goalTime;
+        this.capsuleDesignId = capsuleDesignId;
+        this.password = password;
     }
 
 }

@@ -2,12 +2,12 @@ package org.example.mudda.service;
 
 
 import lombok.RequiredArgsConstructor;
-import org.example.mudda._global.common.CommonService;
 import org.example.mudda._global.exception.CustomException;
 import org.example.mudda.dto.request.CapsuleInsertRequestDTO;
 import org.example.mudda.dto.request.CapsuleMessageInsertRequestDTO;
 import org.example.mudda.entity.Capsule;
 import org.example.mudda.entity.Message;
+import org.example.mudda.model.CapsuleResponseInterface;
 import org.example.mudda.repository.CapsuleRepository;
 import org.example.mudda._global.response.BaseResponse;
 import org.example.mudda._global.response.MsgType;
@@ -36,10 +36,25 @@ public class MuddaService {
 
     private final MessageRepository messageRepository;
 
-    public BaseResponse selectCapsuleList(String idxCapsule) throws Exception {
+    public BaseResponse selectCapsuleList(String code) throws Exception {
+
+        Long capsuleId = null;
+        try {
+            capsuleId = Long.parseLong(decrypt(code));
+        } catch (Exception e) {
+            throw new CustomException(MsgType.CAPSULE_INFO_EMPTY);
+        }
+
+        Capsule capsule = capsuleRepository.findById(capsuleId)
+                .orElseThrow(() -> new CustomException(MsgType.CAPSULE_INFO_EMPTY));
 
 
-        return BaseResponse.of(MsgType.SEARCH_SUCCESSFULLY, decrypt(idxCapsule));
+        if (capsule.getStatus().equals("undigged")) {
+
+        }
+        CapsuleResponseInterface dto = CapsuleResponseInterface.of(capsule);
+
+        return BaseResponse.of(MsgType.SEARCH_SUCCESSFULLY, dto);
 
     }
 
@@ -48,7 +63,6 @@ public class MuddaService {
 
         long currentTime = Instant.now().getEpochSecond(); // 현재 시간(초 단위)
 
-        System.out.println(currentTime);
         if (dto.getGoalTime() < currentTime) {
             throw new CustomException(MsgType.CAPSULE_GOAL_TIME_NOT_ALLOWED);
         }
@@ -62,6 +76,7 @@ public class MuddaService {
     }
 
 
+    @Transactional
     public BaseResponse createCapsuleMessage(CapsuleMessageInsertRequestDTO dto, MultipartFile file) throws Exception {
 
         Long capsuleId = null;
@@ -80,7 +95,13 @@ public class MuddaService {
             savedFilePath = uploadImage(file);
         }
 
-        Message message = Message.of(capsule.getId(), dto.getUserName(), dto.getText(), savedFilePath);
+        int cnt = messageRepository.countByCapsuleId(capsule.getId());
+
+        System.out.println("cnt = " + cnt);
+        if (cnt > 255)
+            throw new CustomException(MsgType.CAPSULE_MESSAGE_LIMIT);
+
+        Message message = Message.of(capsule, dto.getUserName(), dto.getText(), savedFilePath);
 
         messageRepository.save(message);
 
