@@ -110,7 +110,4 @@ public class MuddaController {
         return new ResponseEntity<>(muddaService.updateCapsule(dto), HttpStatus.OK);
     }
 
-
-
-
 }

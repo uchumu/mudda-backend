@@ -87,5 +87,9 @@ public class Capsule {
         this.password = password;
     }
 
+    public void updateStatus(String status) {
+        this.status = status;
+    }
+
 
 }

@@ -38,7 +38,8 @@ dependencies {
     implementation 'mysql:mysql-connector-java:8.0.32'
     implementation 'mysql:mysql-connector-java'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'com.sun.mail:jakarta.mail:1.6.7'
 }
 
 tasks.named('test') {

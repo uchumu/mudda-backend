@@ -14,6 +14,7 @@ import org.example.mudda.repository.CapsuleRepository;
 import org.example.mudda._global.response.BaseResponse;
 import org.example.mudda._global.response.MsgType;
 import org.example.mudda.repository.MessageRepository;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +34,8 @@ import static org.example.mudda._global.common.CommonService.encrypt;
 @Service
 @RequiredArgsConstructor
 public class MuddaService {
+
+    private final JavaMailSender javaMailSender;
 
     private final CapsuleRepository capsuleRepository;
 
@@ -178,7 +181,9 @@ public class MuddaService {
             throw new CustomException(MsgType.CAPSULE_GOAL_TIME_NOT_ALLOWED);
         }
 
-        capsule.update(capsule.getTitle(), "digged", capsule.getCoodinateX(), capsule.getCoodinateY(), capsule.getGoalTime(), capsule.getCapsuleDesignId(), capsule.getPassword());
+        capsule.updateStatus("digged");
+
+        capsuleRepository.save(capsule);
 
         return BaseResponse.of(MsgType.UPDATE_SUCCESSFULLY, "성공");
 
