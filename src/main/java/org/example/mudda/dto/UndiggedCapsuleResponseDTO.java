@@ -9,6 +9,7 @@ public class UndiggedCapsuleResponseDTO implements CapsuleResponseInterface {
     private final Long capsuleDesignId;
     private final String title;
     private final Long goalTime;
+    private final String status = "undigged";
     private final int messageCount;
 
     public UndiggedCapsuleResponseDTO(Capsule capsule) {

@@ -21,7 +21,8 @@ public class CapsuleMessageInsertRequestDTO {
     @Schema(description = "텍스트", example = "텍스트")
     private String text;
 
-    @Schema(hidden = true)
+    @NotEmpty(message = "코드를 입력해주세요")
+    @Schema(description = "코드", example = "코드")
     private String code;
 
 }

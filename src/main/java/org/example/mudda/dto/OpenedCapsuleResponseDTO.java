@@ -12,6 +12,7 @@ public class OpenedCapsuleResponseDTO implements CapsuleResponseInterface {
     private final Long capsuleDesignId;
     private final String title;
     private final Long goalTime;
+    private final String status = "opened";
     private final int messageCount;
     private final List<Message> messages;
 

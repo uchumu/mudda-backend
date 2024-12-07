@@ -9,6 +9,7 @@ public class DiggedCapsuleResponseDTO implements CapsuleResponseInterface {
     private final Long capsuleDesignId;
     private final String title;
     private final Long goalTime;
+    private final String status = "digged";
     private final int messageCount;
     private final Long createAt;
 

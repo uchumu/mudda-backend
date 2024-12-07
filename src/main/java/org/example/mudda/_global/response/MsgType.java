@@ -7,6 +7,7 @@ public enum MsgType {
 
     SEARCH_SUCCESSFULLY(true, 0, "조회 성공"),
     INSERT_SUCCESSFULLY(true, 0, "데이터 생성 성공"),
+    UPDATE_SUCCESSFULLY(true, 0, "데이터 수정 성공"),
     DELETE_SUCCESSFULLY(true, 0, "데이터 삭제 성공"),
 
     CAPSULE_INFO_EMPTY(false, 400, "캡슐이 존재하지 않습니다."),
@@ -18,7 +19,11 @@ public enum MsgType {
     CAPSULE_CODE_ERROR(false ,502, "캡슐 코드를 확인해주세요."),
     IMAGE_FILE_EMPTY(false, 503, "이미지 파일이 없습니다."),
     IMAGE_FILE_TYPE_ERROR(false, 504, "이미지 파일만 업로드 가능합니다."),
-    CAPSULE_MESSAGE_LIMIT(false, 505, "메시지는 255개까지만 입력 가능합니다.")
+    CAPSULE_MESSAGE_LIMIT(false, 505, "메시지는 255개까지만 입력 가능합니다."),
+    CAPSULE_GOLE_TIME_OVER(false, 506, "설정한 캡슐 열람 시간이 지났습니다"),
+    ALREADY_DIGGED(false, 507, "이미 묻기가 진행 된 캡슐입니다."),
+    PASSWORD_DIFF_ERROR(false, 508, "비밀번호가 일치하지 않습니다."),
+
 
     ;
 

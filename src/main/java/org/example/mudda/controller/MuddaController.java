@@ -13,11 +13,13 @@ import org.example.mudda._global.response.BaseResponse;
 import org.example.mudda.custom.Tuple;
 import org.example.mudda.dto.request.CapsuleInsertRequestDTO;
 import org.example.mudda.dto.request.CapsuleMessageInsertRequestDTO;
+import org.example.mudda.dto.request.CapsuleUpdateRequestDTO;
 import org.example.mudda.service.MuddaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 
 
 @Tag(name = "Mudda", description = "Mudda API.")
@@ -32,11 +34,21 @@ public class MuddaController {
             summary = "캡슐 조회",
             description = "" +
                     "# request\n" +
-                    "- `title`: 문자열 (문자열)\n" +
+                    "- `code`: 코드 (문자열)\n" +
                     "\n" +
                     "# response\n" +
-                    "- `title`: 문자열 (문자열)\n"
+                    "- `capsuleDesignId`: 디자인 ID (정수)\n" +
+                    "- `title`: 제목 (문자열)\n" +
+                    "- `goalTime`: 열람 시간 (정수)\n" +
+                    "- `messageCount`: 메시지 개수 (정수)\n" +
+                    "- `createAt`: 생성 시간 (정수)\n" +
+                    "- `messages`: 메시지 리스트 (배열)\n" +
+                    "  - `userName`: 유저 이름 (문자열)\n" +
+                    "  - `text`: 텍스트 (문자열)\n" +
+                    "  - `fileUrl`: 파일 URL (문자열)\n"
+
     )
+
     ResponseEntity<BaseResponse> selectCapsuleList(
             @RequestParam(value = "code", required = false) String code
     ) throws Exception {
@@ -48,7 +60,7 @@ public class MuddaController {
             summary = "캡슐 생성",
             description = "" +
                     "# request\n" +
-                    "- `title`: 문자열 (문자열)\n" +
+                    "- `title`: 제목 (문자열)\n" +
                     "- `map`: 지도 좌표\n" +
                     "  - `x`: x 좌표(실수)\n" +
                     "  - `y`: y 좌표(실수)\n" +
@@ -71,22 +83,34 @@ public class MuddaController {
             summary = "캡슐 메시지 생성",
             description = "" +
                     "# request\n" +
-                    "- `code`: 캡슐 코드(문자열)\n" +
                     "- `dto`: dto\n" +
+                    "  - `code`: 캡슐 코드(문자열)\n" +
                     "  - `userName`: 유저 이름(문자열)\n" +
                     "  - `text`: 텍스트(문자열)\n"+
                     "- `file` : Multipart파일 (파일)\n"
-
     )
-
     ResponseEntity<BaseResponse> createCapsuleMessage(
-            @RequestParam(value = "code") String code,
             @RequestPart @Valid CapsuleMessageInsertRequestDTO dto,
             @RequestPart @Parameter(hidden = true) MultipartFile file
     ) throws Exception {
-        dto.setCode(code);
         return new ResponseEntity<>(muddaService.createCapsuleMessage(dto, file), HttpStatus.OK);
     }
+
+    @PutMapping("/api/capsule")
+    @Operation(
+            summary = "캡슐 수정",
+            description = "" +
+                    "# request\n" +
+                    "- `code`: 캡슐 코드(문자열)\n"+
+                    "- `password`: 비밀번호(문자열)\n"
+    )
+    ResponseEntity<BaseResponse> updateCapsule(
+            @RequestBody @Valid CapsuleUpdateRequestDTO dto
+            ) throws Exception {
+        return new ResponseEntity<>(muddaService.updateCapsule(dto), HttpStatus.OK);
+    }
+
+
 
 
 }

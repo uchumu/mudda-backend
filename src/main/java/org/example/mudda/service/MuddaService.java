@@ -1,10 +1,12 @@
 package org.example.mudda.service;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.mudda._global.exception.CustomException;
 import org.example.mudda.dto.request.CapsuleInsertRequestDTO;
 import org.example.mudda.dto.request.CapsuleMessageInsertRequestDTO;
+import org.example.mudda.dto.request.CapsuleUpdateRequestDTO;
 import org.example.mudda.entity.Capsule;
 import org.example.mudda.entity.Message;
 import org.example.mudda.model.CapsuleResponseInterface;
@@ -147,5 +149,38 @@ public class MuddaService {
         file.transferTo(savedFilePath.toFile()); // 파일 저장
 
         return savedFilename;
+    }
+
+    @Transactional
+    public BaseResponse updateCapsule(CapsuleUpdateRequestDTO dto) {
+
+        long currentTime = Instant.now().getEpochSecond(); // 현재 시간(초 단위)
+
+        Long capsuleId = null;
+        try {
+            capsuleId = Long.parseLong(decrypt(dto.getCode()));
+        } catch (Exception e) {
+            throw new CustomException(MsgType.CAPSULE_INFO_EMPTY);
+        }
+
+        Capsule capsule = capsuleRepository.findById(capsuleId)
+                .orElseThrow(() -> new CustomException(MsgType.CAPSULE_INFO_EMPTY));
+
+        if (!capsule.getPassword().equals(dto.getPassword())) {
+            throw new CustomException(MsgType.PASSWORD_DIFF_ERROR);
+        }
+
+        if (!capsule.getStatus().equals("undigged")) {
+            throw new CustomException(MsgType.ALREADY_DIGGED);
+        }
+
+        if (capsule.getGoalTime() < currentTime) {
+            throw new CustomException(MsgType.CAPSULE_GOAL_TIME_NOT_ALLOWED);
+        }
+
+        capsule.update(capsule.getTitle(), "digged", capsule.getCoodinateX(), capsule.getCoodinateY(), capsule.getGoalTime(), capsule.getCapsuleDesignId(), capsule.getPassword());
+
+        return BaseResponse.of(MsgType.UPDATE_SUCCESSFULLY, "성공");
+
     }
 }
