@@ -23,6 +23,7 @@ public enum MsgType {
     CAPSULE_GOLE_TIME_OVER(false, 506, "설정한 캡슐 열람 시간이 지났습니다"),
     ALREADY_DIGGED(false, 507, "이미 묻기가 진행 된 캡슐입니다."),
     PASSWORD_DIFF_ERROR(false, 508, "비밀번호가 일치하지 않습니다."),
+    FILE_DIR_CREATE_ERROR(false, 509, "파일 디렉토리 생성에 실패했습니다."),
 
 
     ;

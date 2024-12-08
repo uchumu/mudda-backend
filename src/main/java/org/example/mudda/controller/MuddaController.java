@@ -41,7 +41,7 @@ public class MuddaController {
                     "- `title`: 제목 (문자열)\n" +
                     "- `goalTime`: 열람 시간 (정수)\n" +
                     "- `messageCount`: 메시지 개수 (정수)\n" +
-                    "- `createAt`: 생성 시간 (정수)\n" +
+                    "- `createTime`: 생성 시간 (정수)\n" +
                     "- `messages`: 메시지 리스트 (배열)\n" +
                     "  - `userName`: 유저 이름 (문자열)\n" +
                     "  - `text`: 텍스트 (문자열)\n" +
@@ -91,7 +91,7 @@ public class MuddaController {
     )
     ResponseEntity<BaseResponse> createCapsuleMessage(
             @RequestPart @Valid CapsuleMessageInsertRequestDTO dto,
-            @RequestPart @Parameter(hidden = true) MultipartFile file
+            @RequestPart(required = false) @Parameter(hidden = true) MultipartFile file
     ) throws Exception {
         return new ResponseEntity<>(muddaService.createCapsuleMessage(dto, file), HttpStatus.OK);
     }

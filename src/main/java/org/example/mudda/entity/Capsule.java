@@ -1,6 +1,5 @@
 package org.example.mudda.entity;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -45,11 +44,11 @@ public class Capsule {
     private List<Message> messages;
 
 
-    private Long createAt;
+    private Long createTime;
 
     @PrePersist
     protected void onCreate() {
-        this.createAt = Instant.now().getEpochSecond(); // 현재 시간을 초 단위로 설정
+        this.createTime = Instant.now().getEpochSecond(); // 현재 시간을 초 단위로 설정
     }
 
     @Builder

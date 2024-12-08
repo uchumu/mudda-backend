@@ -1,7 +1,6 @@
 package org.example.mudda.service;
 
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.mudda._global.exception.CustomException;
 import org.example.mudda.dto.request.CapsuleInsertRequestDTO;
@@ -14,7 +13,8 @@ import org.example.mudda.repository.CapsuleRepository;
 import org.example.mudda._global.response.BaseResponse;
 import org.example.mudda._global.response.MsgType;
 import org.example.mudda.repository.MessageRepository;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,8 +35,8 @@ import static org.example.mudda._global.common.CommonService.encrypt;
 @RequiredArgsConstructor
 public class MuddaService {
 
-    private final JavaMailSender javaMailSender;
 
+    private static final Logger log = LoggerFactory.getLogger(MuddaService.class);
     private final CapsuleRepository capsuleRepository;
 
     private final MessageRepository messageRepository;
@@ -46,13 +46,13 @@ public class MuddaService {
         Long capsuleId = null;
         try {
             capsuleId = Long.parseLong(decrypt(code));
+            System.out.println("capsuleId = " + capsuleId);
         } catch (Exception e) {
             throw new CustomException(MsgType.CAPSULE_INFO_EMPTY);
         }
 
         Capsule capsule = capsuleRepository.findById(capsuleId)
                 .orElseThrow(() -> new CustomException(MsgType.CAPSULE_INFO_EMPTY));
-
 
         if (capsule.getStatus().equals("undigged")) {
 
@@ -84,9 +84,13 @@ public class MuddaService {
     @Transactional
     public BaseResponse createCapsuleMessage(CapsuleMessageInsertRequestDTO dto, MultipartFile file) throws Exception {
 
+        System.out.println("dto = " + dto);
+
+        System.out.println("file = " + file);
+
         Long capsuleId = null;
         try {
-           capsuleId = Long.parseLong(decrypt(dto.getCode()));
+            capsuleId = Long.parseLong(decrypt(dto.getCode()));
         } catch (Exception e) {
             throw new CustomException(MsgType.CAPSULE_INFO_EMPTY);
         }
@@ -96,7 +100,7 @@ public class MuddaService {
 
         String savedFilePath = "";
 
-        if (file != null){
+        if (file != null && !file.isEmpty()) {
             savedFilePath = uploadImage(file);
         }
 
@@ -137,19 +141,43 @@ public class MuddaService {
             throw new CustomException(MsgType.IMAGE_FILE_TYPE_ERROR);
         }
 
-        // 4. 저장 디렉토리 생성
         Path imageDir = Paths.get(System.getProperty("user.dir"), "/images");
-        if (!Files.exists(imageDir)) {
-            Files.createDirectories(imageDir);
+        try {
+            // 4. 저장 디렉토리 생성
+            if (!Files.exists(imageDir)) {
+                Files.createDirectories(imageDir);
+            }
+
+        } catch (Exception e) {
+            throw new CustomException(MsgType.FILE_DIR_CREATE_ERROR);
+
         }
 
-        // 5. 파일명 생성 및 저장
-        String originalFilename = file.getOriginalFilename();
-        String extension = originalFilename != null ? originalFilename.substring(originalFilename.lastIndexOf(".")) : "";
-        String savedFilename = UUID.randomUUID() + extension; // 고유한 파일명 생성
-        Path savedFilePath = imageDir.resolve(savedFilename);
+        String savedFilename = null;
 
-        file.transferTo(savedFilePath.toFile()); // 파일 저장
+        try {
+            // 5. 파일명 생성 및 저장
+            String originalFilename = file.getOriginalFilename();
+
+            System.out.println("originalFilename = " + originalFilename);
+
+            String extension = originalFilename != null ? originalFilename.substring(originalFilename.lastIndexOf(".")) : "";
+
+            System.out.println("extension = " + extension);
+
+            savedFilename = UUID.randomUUID() + extension; // 고유한 파일명 생성
+
+            System.out.println("savedFilename = " + savedFilename);
+
+            Path savedFilePath = imageDir.resolve(savedFilename);
+
+            System.out.println("savedFilePath = " + savedFilePath);
+
+            file.transferTo(savedFilePath.toFile()); // 파일 저장
+
+        } catch (Exception e) {
+            throw new CustomException(MsgType.FILE_DIR_CREATE_ERROR);
+        }
 
         return savedFilename;
     }

@@ -6,11 +6,13 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.example.mudda.custom.Tuple;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
+@ToString
 public class CapsuleMessageInsertRequestDTO {
 
     @NotEmpty(message = "유저 이름을 입력해주세요.")
